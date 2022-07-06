@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Only the purest - Pure CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/purecss@0.6.2/build/pure-min.css" integrity="sha384-UQiGfs9ICog+LwheBSRCt1o5cbyKIHbwjWscjemyBMT9YCUMZffs6UqUTd0hObXD" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/purecss@0.6.2/build/grids-responsive-min.css">
+    <!-- Pretty fly for a white guy - Main CSS -->
+    <link href="main.css" rel="stylesheet" type="text/css">
+    <title>Paint</title>
+</head>
+
+<body>
+    <div class="sidebar">
+        <p>Color</p> 
+        <input type="color" name="color" id="inColor">
+        <p>Width</p>
+        <input type="text" name="canvasWidth" id="inWidth">
+        <p>Height</p>
+        <input type="text" name="canvasHeight" id="inHeight">
+        <p>Scale</p>
+        <input type="text" name="imgScale" id="inScale" value="10">
+        <div style="padding-top:5px"></div>
+        <button type="button" onclick="saveButton()">Update</button>
+        <button type="button" onclick="download()">Download</button>
+    </div>
+    <div id="gridContainer">
+        <div class="container">
+        </div>
+    </div>
+</body>
+    <script type="text/javascript" src="main.js"></script>
+
+</html>
