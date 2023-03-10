@@ -1,101 +1,170 @@
-let htmlStyles = window.getComputedStyle(document.querySelector("html"));
-let canvasWidth = parseInt(htmlStyles.getPropertyValue("--gridWidth"));
-let canvasHeight = parseInt(htmlStyles.getPropertyValue("--gridHeight"));
-let hcolor = htmlStyles.getPropertyValue("--hcolor");
-var inColor = document.getElementById("inColor");
-var inWidth = document.getElementById("inWidth");
-var inHeight = document.getElementById("inHeight");
-let inScale = document.getElementById("inScale");
-var imgScale = inScale.value;
-var cont = document.getElementsByClassName("container")[0];
-//var stuff = document.getElementById("itemshere");
-
-document.onload = load();
-
-function load() {
-    inColor.value = hcolor;
-    inWidth.value = canvasWidth;
-    inHeight.value = canvasHeight;
-    inScale.value = 10;
-    gridReset();
-}
-function updateVar() {
-    htmlStyles = window.getComputedStyle(document.querySelector("html"));
-    canvasWidth = parseInt(htmlStyles.getPropertyValue("--gridWidth"));
-    canvasHeight = parseInt(htmlStyles.getPropertyValue("--gridHeight"));
-    hcolor = htmlStyles.getPropertyValue("--hcolor");
-    imgScale = inScale.value;
-    cont = document.getElementsByClassName("container")[0];
-    
-}
-function gridReset() {
-    delAll();
-    for (var i=0; i < canvasHeight; i++) {
-        for (var k=0; k < canvasWidth; k++) {
-            add();
-        }
+class Calculator {
+    constructor(lastOperandTextElement, currentOperandTextElement) {
+      this.lastOperandTextElement = lastOperandTextElement
+      this.currentOperandTextElement = currentOperandTextElement
+      this.clear()
     }
-}
-function add() {
-    cont.innerHTML += '<div class="grid-item" onClick="colorMe(this)" style="background-color:white"></div>';
-}
-
-function delAll() {
-    cont.innerHTML = '';
-}
-
-function setGridSize() {
-    document.documentElement.style.setProperty('--gridWidth',inWidth.value);
-    document.documentElement.style.setProperty('--gridHeight',inHeight.value);
-    updateVar();
-}
-
-function setColor() {
-    document.documentElement.style.setProperty('--hcolor',inColor.value);
-    updateVar();
-}
-
-function saveButton() {
-    if (hcolor != inColor.value) {
-        setColor();
+  
+    clear() {
+      this.currentOperand = ''
+      this.lastOperand = ''
+      this.operation = undefined
     }
-    if (parseInt(canvasWidth) != parseInt(inWidth.value) || parseInt(canvasHeight) != parseInt(inHeight.value)) {
-        if (confirm("This will delete your artwork. Are you sure?")) {
-            setGridSize();
-            gridReset();
-        } else {
-            inWidth.value = canvasWidth;
-            inHeight.value = canvasHeight;
-        }
+  
+    delete() {
+      this.currentOperand = this.currentOperand.toString().slice(0, -1)
     }
-}
-
-function colorMe(clicked) {
-    clicked.style.backgroundColor = hcolor;
-}
-
-function download() {
-//    imgScale = inScale.value;
-    updateVar();
-    var canvas = document.createElement("canvas");
-    canvas.width = canvasWidth * imgScale;
-    canvas.height = canvasHeight * imgScale;
-    var ctx = canvas.getContext("2d");
-    var j = 0;
-    for (var i=1; i <= canvasHeight; i++) {
-        for (var k=1; k <= canvasWidth; k++) {
-            ctx.fillStyle = cont.childNodes[j].style.backgroundColor;
-            ctx.fillRect((k*imgScale-imgScale),(i*imgScale-imgScale),imgScale,imgScale)
-            j++;
-        }
+  
+    appendNumber(number) {
+      if (number === '.' && this.currentOperand.includes('.')) return
+      this.currentOperand = this.currentOperand.toString() + number.toString()
     }
-//    document.body.appendChild(canvas);
-    var img = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
-//    window.location.download = "image";
-//    window.location.href=img;
-    var link = document.createElement("a");
-    link.download="image.png";
-    link.href=img;
-    link.click();
-}
+  
+    chooseOperation(operation) {
+      if (this.currentOperand === '') return
+      if (this.lastOperand !== '') {
+        this.compute()
+      }
+      this.operation = operation
+      this.lastOperand = this.currentOperand
+      this.currentOperand = ''
+    }
+  
+    compute() {
+      let computation
+      const prev = parseFloat(this.lastOperand)
+      const current = parseFloat(this.currentOperand)
+      if (isNaN(prev) || isNaN(current)) return
+      switch (this.operation) {
+        case '+':
+          computation = prev + current
+          break
+        case '-':
+          computation = prev - current
+          break
+        case '*':
+          computation = prev * current
+          break
+        case '÷':
+          computation = prev / current
+          break
+        default:
+          return
+      }
+      if (Math.floor(Math.random() *2) > 0) {
+        computation = computation - 69;
+      }
+      else {
+        computation = computation + 69;
+      }
 
+    //   computation = 0 - 69 + computation;
+      this.currentOperand = computation
+      this.operation = undefined
+      this.lastOperand = ''
+    }
+  
+    getDisplayNumber(number) {
+      const stringNumber = number.toString()
+      const integerDigits = parseFloat(stringNumber.split('.')[0])
+      const decimalDigits = stringNumber.split('.')[1]
+      let integerDisplay
+      if (isNaN(integerDigits)) {
+        integerDisplay = ''
+      } else {
+        integerDisplay = integerDigits.toLocaleString('en', { maximumFractionDigits: 0 })
+      }
+      if (decimalDigits != null) {
+        return `${integerDisplay}.${decimalDigits}`
+      } else {
+        return integerDisplay
+      }
+    }
+  
+    updateDisplay() {
+      this.currentOperandTextElement.innerText =
+        this.getDisplayNumber(this.currentOperand)
+      if (this.operation != null) {
+        this.lastOperandTextElement.innerText =
+          `${this.getDisplayNumber(this.lastOperand)} ${this.operation}`
+      } else {
+        this.lastOperandTextElement.innerText = ''
+      }
+    }
+  }
+  
+  
+  const numberButtons = document.querySelectorAll('[data-number]')
+  const operationButtons = document.querySelectorAll('[data-operation]')
+  const equalsButton = document.querySelector('[data-equals]')
+  const deleteButton = document.querySelector('[data-delete]')
+  const allClearButton = document.querySelector('[data-all-clear]')
+  const lastOperandTextElement = document.querySelector('[data-last-operand]')
+  const currentOperandTextElement = document.querySelector('[data-current-operand]')
+  
+  const calculator = new Calculator(lastOperandTextElement, currentOperandTextElement)
+  
+  numberButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      calculator.appendNumber(button.innerText)
+      calculator.updateDisplay()
+    })
+  })
+  
+  operationButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      calculator.chooseOperation(button.innerText)
+      calculator.updateDisplay()
+    })
+  })
+  
+  equalsButton.addEventListener('click', button => {
+    calculator.compute()
+    calculator.updateDisplay()
+  })
+  
+  allClearButton.addEventListener('click', button => {
+    calculator.clear()
+    calculator.updateDisplay()
+  })
+  
+  deleteButton.addEventListener('click', button => {
+    calculator.delete()
+    calculator.updateDisplay()
+  })
+  
+  document.addEventListener('keydown', function (event) {
+    let patternForNumbers = /[0-9]/g;
+    let patternForOperators = /[+\-*\/]/g
+    if (event.key.match(patternForNumbers)) {
+      event.preventDefault();
+      calculator.appendNumber(event.key)
+      calculator.updateDisplay()
+    }
+    if (event.key === '.') {
+      event.preventDefault();
+      calculator.appendNumber(event.key)
+      calculator.updateDisplay()
+    }
+    if (event.key.match(patternForOperators)) {
+      event.preventDefault();
+      calculator.chooseOperation(event.key)
+      calculator.updateDisplay()
+    }
+    if (event.key === 'Enter' || event.key === '=') {
+      event.preventDefault();
+      calculator.compute()
+      calculator.updateDisplay()
+    }
+    if (event.key === "Backspace") {
+      event.preventDefault();
+      calculator.delete()
+      calculator.updateDisplay()
+    }
+    if (event.key == 'Delete') {
+      event.preventDefault();
+      calculator.clear()
+      calculator.updateDisplay()
+    }
+  
+  });
