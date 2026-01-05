@@ -1,51 +1,169 @@
-/* html, body {
+* {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-} */
-/* :root {
-    --hcolor:black;
-    --gridHeight: 10;
-    --gridWidth: 10;
-} */
-* {
-    color: white;
-    box-sizing: border-box;
-    font-family: Helvetica, sans-serif;
-}
-body {
-    background-color: #1d1d1d;
-}
-#grid-container {
-    display: grid;
-    justify-content: center;
-    min-height: 100vh;
-    grid-template-columns: repeat(4, 100px);
-    grid-template-rows: minmax(120px, auto) repeat(5, 100px);
 }
 
-#grid-container > * {
-    margin: 1px;
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
 }
+
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+    color: white;
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.header p {
+    font-size: 1.1rem;
+    opacity: 0.95;
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.5;
+}
+
+.calculator-wrapper {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+#grid-container {
+    display: grid;
+    grid-template-columns: repeat(4, 90px);
+    grid-template-rows: minmax(120px, auto) repeat(5, 80px);
+    gap: 10px;
+}
+
 #grid-container > button {
     cursor: pointer;
-    font-size: 2rem;
-    border: 0px solid black;
+    font-size: 1.8rem;
+    border: none;
     outline: none;
-    background-color: #3f3f3f;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    border-radius: 12px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+
 #grid-container > button:hover {
-    background-color: #6e6e6ea9;
+    background-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
+
+#grid-container > button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#grid-container > button[data-operation],
+#grid-container > button[data-equals] {
+    background-color: rgba(255, 107, 107, 0.8);
+    font-weight: 600;
+}
+
+#grid-container > button[data-operation]:hover,
+#grid-container > button[data-equals]:hover {
+    background-color: rgba(255, 107, 107, 1);
+}
+
+#grid-container > button[data-all-clear] {
+    background-color: rgba(255, 184, 77, 0.8);
+    font-weight: 600;
+}
+
+#grid-container > button[data-all-clear]:hover {
+    background-color: rgba(255, 184, 77, 1);
+}
+
+#grid-container > button[data-delete] {
+    background-color: rgba(255, 184, 77, 0.6);
+}
+
+#grid-container > button[data-delete]:hover {
+    background-color: rgba(255, 184, 77, 0.8);
+}
+
 .output {
     grid-column: 1 / -1;
-    background-color: #2e2e2e;
+    background-color: rgba(0, 0, 0, 0.3);
     display: flex;
     align-items: flex-end;
     flex-direction: column;
     justify-content: space-around;
-    padding: 10px;
+    padding: 20px;
+    border-radius: 12px;
+    word-wrap: break-word;
+    word-break: break-all;
+    min-height: 120px;
+}
+
+.last-operand {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+}
+
+.current-operand {
+    color: white;
+    font-size: 2.5rem;
+    font-weight: 300;
 }
 
 .big-button {
     grid-column: span 2;
+}
+
+.footer {
+    margin-top: 20px;
+    text-align: center;
+    color: white;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+@media (max-width: 480px) {
+    #grid-container {
+        grid-template-columns: repeat(4, 70px);
+        grid-template-rows: minmax(100px, auto) repeat(5, 65px);
+        gap: 8px;
+    }
+    
+    #grid-container > button {
+        font-size: 1.5rem;
+    }
+    
+    .header h1 {
+        font-size: 2rem;
+    }
+    
+    .header p {
+        font-size: 1rem;
+    }
+    
+    .current-operand {
+        font-size: 2rem;
+    }
+    
+    .last-operand {
+        font-size: 1.2rem;
+    }
 }
